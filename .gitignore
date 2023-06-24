@@ -1,0 +1,9 @@
+Lib
+__pycache__
+Include
+Scripts
+pyvenv.cfg
+bin
+lib
+include
+sql_app.db
