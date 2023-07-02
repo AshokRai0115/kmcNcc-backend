@@ -98,3 +98,17 @@ def get_suggestions(user_id: int, db: Session = Depends(get_db)):
                 }
             )
     return data
+
+@app.post(APP_VERSION + "posts/update_likes")
+def update_post_likes(like_info: schemas.UpdateLikes, db: Session = Depends(get_db)):
+    likes = crud.update_post_likes(like_info, db)
+    if likes is None:
+        raise HTTPException(status_code=404, detail="Unable to update likes")
+    return likes
+
+@app.post(APP_VERSION + "posts/update_comment")
+def update_post_comments(comment_info: schemas.UpdateComments, db: Session = Depends(get_db)):
+    comments = crud.update_post_comments(comment_info, db)
+    if comments is None:
+        raise HTTPException(status_code=404, detail="Unable to update comments")
+    return comments

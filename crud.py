@@ -59,6 +59,7 @@ def get_posts(db: Session, skip: int = 0, limit: int = 100):
             models.Post.viewed_by,
             models.Post.user_id,
             models.Post.description,
+            models.Post.comments,
             models.Post.created_at.label("post_date"),
             models.User.username.label("post_by_username"),
             models.User.fullname.label("post_by_fullname"),
@@ -76,3 +77,29 @@ def create_user_post(db: Session, post: schemas.PostCreate, user_id: int):
     db.commit()
     db.refresh(db_post)
     return db_post
+
+def update_post_likes(like_info, db: Session):
+    post = db.query(models.Post).filter(models.Post.id==like_info.post_id).first()
+    user = db.query(models.User).filter(models.User.id == like_info.user_id).first()
+    new_liked_by = list(post.liked_by)
+    if (user.username in new_liked_by):
+        new_liked_by.remove(user.username)
+    else:
+        new_liked_by.append(user.username)
+    post.liked_by = new_liked_by;
+    db.add(post)
+    db.commit()
+    db.refresh(post)
+    return post.liked_by
+
+def update_post_comments(comment_info, db: Session):
+    post = db.query(models.Post).filter(models.Post.id==comment_info.post_id).first()
+    user = db.query(models.User).filter(models.User.id == comment_info.user_id).first()
+    new_comment = {"username": user.username, "fullname": user.fullname, "comment": comment_info.comment}
+    current_comments = list(post.comments)
+    current_comments.append(new_comment)
+    post.comments = current_comments;
+    db.add(post)
+    db.commit()
+    db.refresh(post)
+    return post.comments

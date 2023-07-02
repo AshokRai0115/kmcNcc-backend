@@ -70,3 +70,20 @@ class Post(PostBase):
 
     class Config:
         orm_mode = True
+
+class UpdateLikes(BaseModel):
+    user_id: int
+    post_id: int
+
+    
+    class Config:
+        orm_mode = True
+
+class UpdateComments(BaseModel):
+    user_id: int
+    post_id: int
+    comment: str
+
+    
+    class Config:
+        orm_mode = True
